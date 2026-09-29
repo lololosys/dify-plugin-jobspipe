@@ -1,0 +1,32 @@
+version: 0.0.1
+type: plugin
+author: lololosys
+name: jobspipe
+label:
+  en_US: JobsPipe
+description:
+  en_US: Search normalized live job postings via JobsPipe — every job posting, one API.
+icon: icon.svg
+resource:
+  memory: 1048576
+  permission:
+    tool:
+      enabled: true
+network:
+  domains:
+    - api.jobspipe.dev
+plugins:
+  tools:
+    - provider/jobspipe.yaml
+meta:
+  version: 0.0.1
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+created_at: "2026-09-29T15:30:00.000000Z"
+privacy: PRIVACY.md
+verified: false

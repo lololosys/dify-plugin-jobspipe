@@ -1,0 +1,124 @@
+identity:
+  name: search_jobs
+  author: lololosys
+  label:
+    en_US: Search Jobs
+description:
+  human:
+    en_US: Search normalized live job postings on JobsPipe by title, skills, location, company, remote status, and more.
+  llm: Search live job postings via the JobsPipe API (POST https://api.jobspipe.dev/v1/jobs/search). Use filters such as job titles, skills, country codes, cities, company names, remote, employment type, and limit. Returns normalized job records with metadata.
+extra:
+  python:
+    source: tools/search_jobs.py
+parameters:
+  - name: job_title_or
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Job titles
+    human_description:
+      en_US: Comma-separated title phrases to match any of (e.g. Software Engineer, Data Scientist).
+    llm_description: Comma-separated job title phrases mapped to job_title_or.
+  - name: skills_or
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Skills
+    human_description:
+      en_US: Comma-separated skill slugs (e.g. python, react, kubernetes).
+    llm_description: Comma-separated skill slugs mapped to skills_or.
+  - name: job_country_code_or
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Country codes
+    human_description:
+      en_US: Comma-separated ISO alpha-2 country codes (e.g. US, GB, DE).
+    llm_description: Comma-separated ISO alpha-2 country codes mapped to job_country_code_or.
+  - name: city_or
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Cities
+    human_description:
+      en_US: Comma-separated whole city names (e.g. London, Munich).
+    llm_description: Comma-separated city names mapped to city_or.
+  - name: company_name_or
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Company names
+    human_description:
+      en_US: Comma-separated company names (e.g. Stripe, Amazon).
+    llm_description: Comma-separated company names mapped to company_name_or.
+  - name: remote
+    type: boolean
+    required: false
+    form: llm
+    label:
+      en_US: Remote only
+    human_description:
+      en_US: true for remote-only roles, false to exclude remote.
+    llm_description: Optional boolean remote filter.
+  - name: employment_type_or
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Employment types
+    human_description:
+      en_US: Comma-separated values from full-time, part-time, contract, temporary, internship.
+    llm_description: Comma-separated employment types mapped to employment_type_or.
+  - name: posted_at_max_age_days
+    type: number
+    required: false
+    form: llm
+    label:
+      en_US: Posted within days
+    human_description:
+      en_US: Only postings newer than this many days.
+    llm_description: Integer mapped to posted_at_max_age_days.
+  - name: min_salary_usd
+    type: number
+    required: false
+    form: llm
+    label:
+      en_US: Minimum salary USD
+    human_description:
+      en_US: Only jobs whose posted annual USD salary reaches this amount.
+    llm_description: Integer mapped to min_salary_usd.
+  - name: limit
+    type: number
+    required: false
+    default: 10
+    form: llm
+    label:
+      en_US: Limit
+    human_description:
+      en_US: Maximum number of results (default 10).
+    llm_description: Max results to return (mapped to limit). Cap depends on JobsPipe plan.
+  - name: status
+    type: string
+    required: false
+    default: active
+    form: form
+    label:
+      en_US: Status
+    human_description:
+      en_US: Lifecycle filter - active, closed, or any. Defaults to active.
+    llm_description: Job status filter - active, closed, or any.
+    options:
+      - value: active
+        label:
+          en_US: Active
+      - value: closed
+        label:
+          en_US: Closed
+      - value: any
+        label:
+          en_US: Any

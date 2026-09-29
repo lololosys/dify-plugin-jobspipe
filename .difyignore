@@ -1,0 +1,10 @@
+.venv
+.git
+__pycache__
+.env
+.DS_Store
+*.difypkg
+.gitignore
+.ruff_cache
+.mypy_cache
+tests

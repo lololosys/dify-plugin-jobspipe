@@ -1,0 +1,26 @@
+credentials_for_provider:
+  api_key:
+    type: secret-input
+    required: true
+    label:
+      en_US: JobsPipe API Key
+    placeholder:
+      en_US: jp_live_…
+    help:
+      en_US: Create an API key in the JobsPipe dashboard. Sent as a Bearer token.
+    url: https://jobspipe.dev
+extra:
+  python:
+    source: provider/jobspipe.py
+identity:
+  author: lololosys
+  name: jobspipe
+  label:
+    en_US: JobsPipe
+  description:
+    en_US: Search normalized live job postings via JobsPipe — every job posting, one API.
+  icon: icon.svg
+  tags:
+    - search
+tools:
+  - tools/search_jobs.yaml
