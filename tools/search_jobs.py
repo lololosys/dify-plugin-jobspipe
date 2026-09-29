@@ -95,14 +95,6 @@ class SearchJobsTool(Tool):
             return
 
         jobs = payload.get("data") or []
-        metadata = payload.get("metadata") or {}
-        summary = (
-            f"Found {len(jobs)} job posting(s)."
-            + (
-                f" Credits charged: {metadata.get('credits_charged')}."
-                if metadata.get("credits_charged") is not None
-                else ""
-            )
-        )
+        summary = f"Found {len(jobs)} job posting(s)."
         yield self.create_text_message(summary)
         yield self.create_json_message(payload)
