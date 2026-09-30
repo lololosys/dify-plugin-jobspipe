@@ -46,7 +46,7 @@ See [PRIVACY.md](./PRIVACY.md). The plugin forwards search queries to JobsPipe a
 dify plugin package ./dify-plugin-jobspipe
 ```
 
-Requires Python 3.12+ and `dify-plugin>=0.9.0`.
+Requires Python 3.12+ and `dify-plugin==0.9.0`.
 
 ## License
 

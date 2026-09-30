@@ -1,8 +1,8 @@
 from typing import Any, Generator
 
-import requests
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
+import requests
 
 JOBSPIPE_SEARCH_URL = "https://api.jobspipe.dev/v1/jobs/search"
 
@@ -12,6 +12,39 @@ def _split_csv(value: str | None) -> list[str] | None:
         return None
     items = [part.strip() for part in str(value).split(",") if part.strip()]
     return items or None
+
+
+def search_jobs(api_key: str, body: dict[str, Any]) -> dict[str, Any]:
+    """POST a search to JobsPipe and return the decoded JSON body.
+
+    Raises requests.exceptions.HTTPError on a non-2xx status and
+    requests.exceptions.RequestException on network failures, so callers
+    (the tool and the provider's credential check) decide how to surface them.
+    """
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+    response = requests.post(
+        JOBSPIPE_SEARCH_URL,
+        json=body,
+        headers=headers,
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def describe_http_error(exc: requests.exceptions.HTTPError) -> str:
+    response = exc.response
+    if response is None:
+        return "JobsPipe API error (?): no response"
+    try:
+        detail = response.json().get("error", response.text[:300])
+    except Exception:
+        detail = (response.text or "")[:300]
+    return f"JobsPipe API error ({response.status_code}): {detail}"
 
 
 class SearchJobsTool(Tool):
@@ -62,31 +95,10 @@ class SearchJobsTool(Tool):
         if "limit" not in body:
             body["limit"] = 10
 
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        }
-
         try:
-            response = requests.post(
-                JOBSPIPE_SEARCH_URL,
-                json=body,
-                headers=headers,
-                timeout=30,
-            )
-            response.raise_for_status()
-            payload = response.json()
+            payload = search_jobs(api_key, body)
         except requests.exceptions.HTTPError as exc:
-            detail = ""
-            if exc.response is not None:
-                try:
-                    detail = exc.response.json().get("error", exc.response.text[:300])
-                except Exception:
-                    detail = (exc.response.text or "")[:300]
-            yield self.create_text_message(
-                f"JobsPipe API error ({exc.response.status_code if exc.response else '?'}): {detail}"
-            )
+            yield self.create_text_message(describe_http_error(exc))
             return
         except requests.exceptions.RequestException as exc:
             yield self.create_text_message(
